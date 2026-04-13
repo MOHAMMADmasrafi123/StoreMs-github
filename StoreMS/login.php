@@ -80,19 +80,26 @@ if(isset($_POST['user_email'])){
     $user_email    = $_POST['user_email'];
     $user_password = $_POST['user_password'];
 
-    $sql = "SELECT * FROM users WHERE user_email = '$user_email' AND user_password = '$user_password'";
+    
+    $user_email    = mysqli_real_escape_string($conn, $user_email);
+    $user_password = mysqli_real_escape_string($conn, $user_password);
+
+    $sql = "SELECT * FROM users 
+            WHERE user_email = '$user_email' 
+            AND user_password = '$user_password'";
 
     $query = $conn->query($sql);
 
-    if (mysqli_num_rows($query) > 0){
-		
+    if ($query && mysqli_num_rows($query) > 0){
+
         $data = mysqli_fetch_array($query);
 
         $_SESSION['user_first_name'] = $data['user_first_name'];
         $_SESSION['user_last_name']  = $data['user_last_name'];
-		
+
         header('Location: index.php');
-        exit(); 
+        exit();
+
     } else {
         echo "<div class='error'>Invalid Email or Password</div>";
     }
@@ -101,7 +108,7 @@ if(isset($_POST['user_email'])){
 
 <h2>Login</h2>
 
-<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST" autocomplete="off">
+<form method="POST" autocomplete="off">
 
     <input type="email" name="user_email" placeholder="Enter Email">
 

@@ -12,8 +12,24 @@ if (!empty($user_first_name) && !empty($user_last_name)) {
 <html>
 <head>
     <title>Edit Users</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Edit User</h4>
+                </div>
+
+                <div class="card-body">
 
 <?php
 $user_id = $user_first_name_db = $user_last_name_db = $user_email = $user_password = '';
@@ -25,11 +41,11 @@ if (isset($_GET['id'])) {
     $query = $conn->query($sql);
     $data = mysqli_fetch_assoc($query);
 
-    $user_id         = $data['user_id'];
-    $user_first_name_db = $data['user_first_name'];
-    $user_last_name_db  = $data['user_last_name'];
-    $user_email      = $data['user_email'];
-    $user_password   = $data['user_password'];
+    $user_id              = $data['user_id'];
+    $user_first_name_db   = $data['user_first_name'];
+    $user_last_name_db    = $data['user_last_name'];
+    $user_email           = $data['user_email'];
+    $user_password        = $data['user_password'];
 }
 
 if (isset($_GET['user_first_name']) && isset($_GET['user_id'])) {
@@ -48,32 +64,58 @@ if (isset($_GET['user_first_name']) && isset($_GET['user_id'])) {
             WHERE user_id = $new_user_id";
 
     if ($conn->query($sql1) === TRUE) {
-        echo "Update Successful";
+        echo '<div class="alert alert-success">Update Successful</div>';
     } else {
-        echo "Not update: " . $conn->error;
+        echo '<div class="alert alert-danger">Not updated: ' . $conn->error . '</div>';
     }
 }
 ?>
 
 <form action="" method="GET">
 
-    User's First Name :<br>
-    <input type="text" name="user_first_name" value="<?php echo $user_first_name_db; ?>"><br><br>
+    <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <input type="text" name="user_first_name"
+               class="form-control"
+               value="<?php echo $user_first_name_db; ?>">
+    </div>
 
-    User's Last Name :<br>
-    <input type="text" name="user_last_name" value="<?php echo $user_last_name_db; ?>"><br><br>
+    <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <input type="text" name="user_last_name"
+               class="form-control"
+               value="<?php echo $user_last_name_db; ?>">
+    </div>
 
-    User's Email :<br>
-    <input type="email" name="user_email" value="<?php echo $user_email; ?>"><br><br>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="user_email"
+               class="form-control"
+               value="<?php echo $user_email; ?>">
+    </div>
 
-    User's Password :<br>
-    <input type="text" name="user_password" value="<?php echo $user_password; ?>"><br><br>
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="text" name="user_password"
+               class="form-control"
+               value="<?php echo $user_password; ?>">
+    </div>
 
-    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+    <input type="hidden" name="user_id"
+           value="<?php echo $user_id; ?>">
 
-    <input type="submit" value="Update">
+    <button type="submit" class="btn btn-success w-100">
+        Update User
+    </button>
 
 </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

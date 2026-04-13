@@ -1,12 +1,12 @@
 <?php
 require('connection.php');
-
 session_start();
 
 $user_first_name = $_SESSION['user_first_name'] ?? '';
 $user_last_name  = $_SESSION['user_last_name'] ?? '';
 
 if (!empty($user_first_name) && !empty($user_last_name)) {
+
 
 $sql1 = "SELECT * FROM product";
 $query1 = $conn->query($sql1);
@@ -24,39 +24,63 @@ while ($data1 = mysqli_fetch_assoc($query1)) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>List of Product</title>
+    <title>List of Store Product</title>
+
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
 
-<?php
-$sql = "SELECT * FROM store_product";
-$query = $conn->query($sql);
+<body class="bg-light">
 
-echo "<table border='1'>
-<tr>
-<th>Product Name</th>
-<th>Quantity</th>
-<th>Entry Date</th>
-<th>Action</th>
-</tr>";
+<div class="container mt-4">
 
-while ($data = mysqli_fetch_assoc($query)) {
+    <h3 class="mb-3">
+        Welcome, <?php echo $user_first_name . " " . $user_last_name; ?>
+    </h3>
 
-    $store_product_id         = $data['store_product_id'];
-    $store_product_name       = $data['store_product_name'];
-    $store_product_quantity   = $data['store_product_quantity'];
-    $store_product_entry_date = $data['store_product_entry_date'];
+    <h4 class="mb-4">Store Product List</h4>
 
-    echo "<tr>
-        <td>" . ($data_list[$store_product_name] ?? 'Unknown') . "</td>
-        <td>$store_product_quantity</td>
-        <td>$store_product_entry_date</td>
-        <td><a href='edit_store_product.php?id=$store_product_id'>Edit</a></td>
-    </tr>";
-}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Entry Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-echo "</table>";
-?>
+        <tbody>
+        <?php
+        $sql = "SELECT * FROM store_product";
+        $query = $conn->query($sql);
+
+        while ($data = mysqli_fetch_assoc($query)) {
+
+            $store_product_id         = $data['store_product_id'];
+            $store_product_name       = $data['store_product_name'];
+            $store_product_quantity   = $data['store_product_quantity'];
+            $store_product_entry_date = $data['store_product_entry_date'];
+
+            echo "<tr>
+                <td>" . ($data_list[$store_product_name] ?? 'Unknown') . "</td>
+                <td>$store_product_quantity</td>
+                <td>$store_product_entry_date</td>
+                <td>
+                 <a href='edit_store_product.php?id=$store_product_id' class='btn btn-sm btn-primary'>
+                <i class='fa fa-edit'></i> Edit
+                </a>
+                </td>
+                </tr>";
+        }
+        ?>
+        </tbody>
+    </table>
+
+</div>
 
 </body>
 </html>

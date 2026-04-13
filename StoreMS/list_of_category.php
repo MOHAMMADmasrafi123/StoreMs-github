@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// session check
 if(empty($_SESSION['user_first_name']) || empty($_SESSION['user_last_name'])){
     header('location: login.php');
     exit();
 }
 
-// database connection
 require('connection.php');
 ?>
 
@@ -15,37 +13,56 @@ require('connection.php');
 <html>
 <head>
     <title>List of Category</title>
+
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
 
-<h2>Welcome, <?php echo $_SESSION['user_first_name'] . " " . $_SESSION['user_last_name']; ?></h2>
+<body class="bg-light">
 
-<?php
+<div class="container mt-4">
 
-$sql = "SELECT * FROM category";
-$query = $conn->query($sql);
+    <h2 class="mb-4">
+        Welcome, <?php echo $_SESSION['user_first_name'] . " " . $_SESSION['user_last_name']; ?>
+    </h2>
 
-echo "<table border='1'>
-<tr>
-    <th>Category</th>
-    <th>Date</th>
-    <th>Action</th>
-</tr>";
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-while($data = mysqli_fetch_assoc($query)){
-    $category_id        = $data['category_id'];
-    $category_name      = $data['category_name'];
-    $category_entrydate = $data['category_entrydate'];
+        <tbody>
+        <?php
+        $sql = "SELECT * FROM category";
+        $query = $conn->query($sql);
 
-    echo "<tr>
-            <td>$category_name</td>
-            <td>$category_entrydate</td>
-            <td><a href='edit_category.php?id=$category_id'>Edit</a></td>
-          </tr>";
-}
+        while($data = mysqli_fetch_assoc($query)){
+            $category_id        = $data['category_id'];
+            $category_name      = $data['category_name'];
+            $category_entrydate = $data['category_entrydate'];
 
-echo "</table>";
-?>
+            echo "<tr>
+                    <td>$category_name</td>
+                    <td>$category_entrydate</td>
+                    <td>
+                        <a href='edit_category.php?id=$category_id' class='btn btn-sm btn-primary'>
+                            <i class='fa fa-edit'></i> Edit
+                        </a>
+                    </td>
+                  </tr>";
+        }
+        ?>
+        </tbody>
+    </table>
+
+</div>
 
 </body>
 </html>

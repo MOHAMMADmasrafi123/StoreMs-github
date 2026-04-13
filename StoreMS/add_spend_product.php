@@ -1,70 +1,100 @@
 <?php
 require('connection.php');
-require('my_function.php');
 session_start();
 
-ob_start(); // ✅ FIX: added output buffering
+$user_first_name = $_SESSION['user_first_name'] ?? '';
+$user_last_name  = $_SESSION['user_last_name'] ?? '';
 
-$user_first_name = $_SESSION['user_first_name'];
-$user_last_name = $_SESSION['user_last_name'];
+if(!empty($user_first_name) && !empty($user_last_name)){
 
-if(!empty($user_first_name) && !empty($user_last_name)) {
+// 🔹 Insert Data
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+    $product_id = $_POST['product_id'];
+    $quantity   = $_POST['quantity'];
+    $date       = $_POST['date'];
+
+    if(!empty($product_id) && !empty($quantity) && !empty($date)){
+
+        $sql = "INSERT INTO spend_product 
+        (spend_product_name, spend_product_quantity, spend_product_entry_date)
+        VALUES ('$product_id', '$quantity', '$date')";
+
+        if($conn->query($sql)){
+            $msg = "<div class='alert alert-success'> Data Inserted Successfully</div>";
+        } else {
+            $msg = "<div class='alert alert-danger'> Failed to Insert Data</div>";
+        }
+
+    } else {
+        $msg = "<div class='alert alert-warning'>Fill all feild</div>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Spend Product</title>
-    <?php include 'links.php'; ?>
+    <title>Add Spend Product</title>
+
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
 
-<?php
-if(isset($_GET['spend_product_name'])){
+<body class="bg-light">
 
-    $spend_product_name         = $_GET['spend_product_name'];
-    $spend_product_quantity     = $_GET['spend_product_quantity'];
-    $spend_product_entry_date   = $_GET['spend_product_entry_date'];
+<div class="container mt-5">
 
-    $sql = "INSERT INTO spend_product
-    (spend_product_name, spend_product_quantity, spend_product_entry_date)
-    VALUES ('$spend_product_name', '$spend_product_quantity', '$spend_product_entry_date')";
+    <h3>Welcome, <?php echo $user_first_name . " " . $user_last_name; ?></h3>
 
-    if($conn->query($sql) == TRUE){
-        echo 'Data Inserted';
-    }else{
-        echo 'Data not inserted';
-    }
-}
-?>
+    <div class="card p-4 mt-3">
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
+        <h4 class="mb-3">➖ Spend Product</h4>
 
-    Product :<br>
-    <select name="spend_product_name">
-        <?php
-         data_list('product', 'product_id', 'product_name');
-        ?>
-    </select><br><br>
+        <?php if(isset($msg)) echo $msg; ?>
 
-    Product Quantity :<br>
-    <input type="text" name="spend_product_quantity"><br><br>
+        <form method="POST">
 
-    Spend Entry Date :<br>
-    <input type="date" name="spend_product_entry_date"><br><br>
+            <!-- Product -->
+            <label>Select Product</label>
+            <select name="product_id" class="form-control mb-3" required>
+                <option value="">-- Select Product --</option>
+                <?php
+                $sql = "SELECT * FROM product";
+                $query = $conn->query($sql);
 
-    <input type="submit" value="submit">
-</form>
+                while($row = mysqli_fetch_assoc($query)){
+                    echo "<option value='".$row['product_id']."'>".$row['product_name']."</option>";
+                }
+                ?>
+            </select>
 
-<?php
-$content = ob_get_clean();
-include('layout.php');
-?>
+            <!-- Quantity -->
+            <label>Quantity</label>
+            <input type="number" name="quantity" class="form-control mb-3" required>
+
+            <!-- Date -->
+            <label>Date</label>
+            <input type="date" name="date" class="form-control mb-3" required>
+
+            <!-- Button -->
+            <button type="submit" class="btn btn-danger">
+                <i class="fa fa-minus-circle"></i> Spend Product
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 </body>
 </html>
 
-<?php 
+<?php
 } else {
     header('location: login.php');
 }
